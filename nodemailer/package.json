@@ -12,7 +12,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
     "new-module": "tsx scripts/new-module.ts",
-    "test": "vp test",
+    "test": "vp test --watch",
     "prepare": "vp config"
   },
   "dependencies": {
