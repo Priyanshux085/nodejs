@@ -1,9 +1,23 @@
 import { type Response } from "express";
-import { EmailDTOLoginMethod, LoginDTO } from "src/appwrite/appwrite.interface";
+import { EmailDTOLoginMethod } from "src/appwrite/appwrite.interface";
+import { IsEmail, IsNotEmpty, IsString, IsStrongPassword, MinLength } from "class-validator";
 
-export interface AuthDTO {
+export class AuthDTO {
+  @MinLength(3)
+  @IsString()
+  @IsNotEmpty()
   name: string;
+
+  @IsEmail()
   email: string;
+
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
   password: string;
 };
 

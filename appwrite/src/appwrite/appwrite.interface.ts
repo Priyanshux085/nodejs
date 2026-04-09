@@ -1,20 +1,38 @@
-import { ID } from "node-appwrite";
+import { IS_ALPHANUMERIC, IsAlphanumeric, IsDate, IsEmail, IsNotEmpty, IsString, IsStrongPassword, IsUUID, MinLength } from "class-validator";
 
-export interface CreateUserDTO {
+export class CreateUserDTO {
+  @IsString()
   name: string;
+
+  @IsEmail()
   email: string;
+
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 3,
+    minUppercase: 1,
+    minSymbols: 1,
+    minNumbers: 3
+  })
   passwordHash: string;
+
+  @IsNotEmpty()
+  @IsAlphanumeric()
+  @MinLength(6)
   username: string;
 }
 
-export interface UserDTO {
+export class UserDTO extends CreateUserDTO {
+  @IsString()
   id: string
-  name: string,
-  username: string,
-  email: string,
-  passwordHash: string,
+
+  @IsUUID("5")
   sessionId: string
-  $createdAt: Date,
+
+  @IsDate()
+  $createdAt: Date
+
+  @IsDate()
   $updatedAt: Date
 }
 
