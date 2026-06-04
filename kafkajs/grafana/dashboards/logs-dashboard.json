@@ -1,0 +1,80 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1629490194658,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Loki",
+      "description": "Total log lines from the playground in the last 5 minutes",
+      "fieldConfig": {"defaults": {}, "overrides": []},
+      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0},
+      "id": 1,
+      "interval": null,
+      "options": {},
+      "pluginVersion": "9.5.7",
+      "targets": [
+        {
+          "expr": "sum by (app, playground) (count_over_time({app=\"kafkajs\", playground=\"outbox\"}[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Log Lines (last 5m)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Loki",
+      "description": "Error log lines from the playground in the last 5 minutes",
+      "fieldConfig": {"defaults": {}, "overrides": []},
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0},
+      "id": 2,
+      "options": {},
+      "targets": [
+        {
+          "expr": "sum by (app, playground) (count_over_time({app=\"kafkajs\", playground=\"outbox\"} |= \"ERROR\"[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors (last 5m)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Loki",
+      "description": "Logs sent directly by playground.ts into Loki",
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 4},
+      "id": 3,
+      "options": {},
+      "targets": [
+        {"expr": "{app=\"kafkajs\", playground=\"outbox\"}", "refId": "A"}
+      ],
+      "title": "Playground Logs",
+      "type": "logs"
+    },
+    {
+      "datasource": "Loki",
+      "description": "Error logs sent by playground.ts into Loki",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 14},
+      "id": 4,
+      "options": {},
+      "targets": [
+        {"expr": "{app=\"kafkajs\", playground=\"outbox\"} |= \"ERROR\"", "refId": "A"}
+      ],
+      "title": "Playground Errors",
+      "type": "logs"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["kafka", "bun", "logs", "playground"],
+  "templating": {"list": []},
+  "time": {"from": "now-15m", "to": "now"},
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Kafka Bun Logs (Full)",
+  "uid": "kafka-bun-logs-full",
+  "version": 1
+}

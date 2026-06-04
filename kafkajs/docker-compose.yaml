@@ -30,3 +30,55 @@ services:
     ports:
       - "9092:9092"
       - "8082:8082"
+  loki:
+    image: grafana/loki:2.8.2
+    container_name: kafkajs-loki
+    user: root
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./grafana/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+      - loki-wal:/wal
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: grafana/promtail:2.8.2
+    container_name: kafkajs-promtail
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+
+  grafana:
+    image: grafana/grafana:9.5.7
+    container_name: kafkajs-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - loki
+    ports:
+      - "3000:3000"
+
+  bun-playground:
+    image: oven/bun:latest
+    container_name: kafkajs-bun-playground
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: ["bun", "run", "index.ts"]
+    environment:
+      - KAFKA_BROKERS=localhost:9092
+      - KAFKA_TOPIC=test-topic
+      - OUTBOX_DB_FILE=outbox.db
+    depends_on:
+      - redpanda
+
+volumes:
+  loki-data:
+  loki-wal:
